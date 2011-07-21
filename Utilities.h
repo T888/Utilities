@@ -1,3 +1,7 @@
+/*                                                       */
+/* Utilities.h by T888 - T.888@gmx.com - github.com/T888 */
+/*                                                       */
+
 #ifndef UTILS_H
 #define UTILS_H
 
@@ -9,6 +13,8 @@
 	#include <cmath>
 #endif
 
+#include <stdlib.h>
+#include <ctime>
 
 #ifndef FLOAT_TYPE
 	#define FLOAT_TYPE_DEFINED
@@ -16,7 +22,7 @@
 #endif
 
 
-namespace Utils
+namespace Common
 {
 	// _________________________________________________
 	//
@@ -104,7 +110,7 @@ namespace Random
 	{ 
 		// seed is randomized
 		if (seed == 0)
-			srand ((unsigned) time (NULL));
+			srand ((unsigned) time (0));
 
 		// Reinitializes rng (see lib documentation)
 		else if (seed = 1)

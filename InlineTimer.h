@@ -1,7 +1,10 @@
+/*                                                         */
 /* InlineTimer.h by T888 - T.888@gmx.com - github.com/T888 */
+/*                                                         */
 
 #ifndef INLINE_TIMER_H
 #define INLINE_TIMER_H
+#include <Windows.h>
 
 // ************************************************************************************
 // InlineTimer class : Performs high precision timing

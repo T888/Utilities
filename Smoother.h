@@ -1,8 +1,11 @@
+/*                                                      */
 /* Smoother.h by T888 - T.888@gmx.com - github.com/T888 */
+/*                                                      */
 
 #ifndef SMOOTHER_H
 #define SMOOTHER_H
 #include "InlineTimer.h"
+#include <list>
 
 // ************************************************************************************
 // Smoother class 
@@ -79,7 +82,7 @@ void Smoother <Item>::Update (Item item)
 	static InlineTimer timer;
 	timer.Mark ();
 
-	// Push/pop list if long enough.
+	// Push list value and pop if long enough.
 	//
 	m_list.push_back (item);
 	if (m_list.size () > m_samples)
