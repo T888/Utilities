@@ -4,10 +4,17 @@
 
 #ifndef INLINE_TIMER_H
 #define INLINE_TIMER_H
-#include <Windows.h>
+
+#define USE_HIGHRES_TIMER
+
+#ifdef USE_HIGHRES_TIMER
+	#include <Windows.h> // contains code for high perf timer
+#else
+	#include <ctime>     // standard library clock 
+#endif
 
 // ************************************************************************************
-// InlineTimer class : Performs high precision timing
+// InlineTimer class : Performs high or low precision timing (see #define above)
 // -- to start, construct a new instance or call Reset ()
 // -- to stop, call Mark ()
 // -- construct with a callback function argument if desired (*pfn)(double, void*)
@@ -63,8 +70,13 @@ InlineTimer::InlineTimer (Callback pfn, void* context)
 inline
 void InlineTimer::Reset ()
 {
+#ifdef USE_HIGHRES_TIMER
 	QueryPerformanceFrequency ((LARGE_INTEGER*)&m_freq);
 	QueryPerformanceCounter ((LARGE_INTEGER*)&m_start);
+#else
+	m_freq = CLOCKS_PER_SEC;
+	m_start = clock ();
+#endif
 }
 
 
@@ -78,7 +90,13 @@ inline
 double InlineTimer::Mark ()
 {
 	__int64 finish;
+
+#ifdef USE_HIGHRES_TIMER
 	QueryPerformanceCounter ((LARGE_INTEGER*)&finish);
+#else
+	finish = clock ();
+#endif
+
 	m_delta = (double) (finish - m_start) / m_freq;
 	if (m_callback != 0)
 		m_callback (m_delta, m_context);

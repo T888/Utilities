@@ -11,9 +11,13 @@
 #include <vector>
 #include <algorithm>
 
-namespace {std::ofstream file ("output.txt");}
 
-const double PI = 3.1415926535897932384626433832795;
+namespace {
+
+	std::ofstream file ("output.txt");
+	const double PI = 3.1415926535897932384626433832795;
+}
+
 
 //#define FILE_OUT
 #ifdef FILE_OUT
@@ -28,11 +32,18 @@ int main ()
 	out << "\n";
 	out << "Utilities" << "\n";
 	out << "---------" << "\n\n";
+
+	// -------------------------------------------------
+	// Round
+	//
 	out << "-- Round (0.5) = " << Common::Round (0.5) << "\n";
 	out << "-- Round (0.4) = " << Common::Round (0.4) << "\n";
 	out << "-- Round (0.6) = " << Common::Round (0.6) << "\n";
 	out << "\n";
 
+	// -------------------------------------------------
+	// Interpolate
+	//
 	out << "-- Interpolate (0.0, 10.0, 0.0) = " << std::fixed << Common::Interpolate (0.0, 10.0, 0.0) << "\n";
 	out << "-- Interpolate (0.0, 10.0, 0.3) = " << std::fixed << Common::Interpolate (0.0, 10.0, 0.3) << "\n";
 	out << "-- Interpolate (0.0, 10.0, 0.5) = " << std::fixed << Common::Interpolate (0.0, 10.0, 0.5) << "\n";
@@ -40,6 +51,9 @@ int main ()
 	out << "-- Interpolate (0.0, 10.0, 1.0) = " << std::fixed << Common::Interpolate (0.0, 10.0, 1.0) << "\n";
 	out << "\n";
 
+	// -------------------------------------------------
+	// SmoothInterpolate
+	//
 	out << "-- SmoothInterpolate (0.0, 10.0, 0.0) = " << std::fixed << Common::SmoothInterpolate (0.0, 10.0, 0.0) << "\n";
 	out << "-- SmoothInterpolate (0.0, 10.0, 0.3) = " << std::fixed << Common::SmoothInterpolate (0.0, 10.0, 0.3) << "\n";
 	out << "-- SmoothInterpolate (0.0, 10.0, 0.5) = " << std::fixed << Common::SmoothInterpolate (0.0, 10.0, 0.5) << "\n";
@@ -48,7 +62,19 @@ int main ()
 	out << "\n";
 
 	// -------------------------------------------------
+	// CosInterpolate
+	//
+	out << "-- CosInterpolate (0.0, 10.0, 0.0) = " << std::fixed << Common::CosInterpolate (0.0, 10.0, 0.0) << "\n";
+	out << "-- CosInterpolate (0.0, 10.0, 0.3) = " << std::fixed << Common::CosInterpolate (0.0, 10.0, 0.3) << "\n";
+	out << "-- CosInterpolate (0.0, 10.0, 0.5) = " << std::fixed << Common::CosInterpolate (0.0, 10.0, 0.5) << "\n";
+	out << "-- CosInterpolate (0.0, 10.0, 0.7) = " << std::fixed << Common::CosInterpolate (0.0, 10.0, 0.7) << "\n";
+	out << "-- CosInterpolate (0.0, 10.0, 1.0) = " << std::fixed << Common::CosInterpolate (0.0, 10.0, 1.0) << "\n";
+	out << "\n";
+
+	// -------------------------------------------------
 	// InsertSorted
+	//
+	// Build a randomized array of chars.
 	//
 	std::vector <char> chars (26);
 	for (unsigned i = 0; i < chars.size (); ++i)
@@ -59,6 +85,9 @@ int main ()
 	for (unsigned i = 0; i < chars.size (); ++i) {
 		out << chars[i] << " ";
 	} out << "\n";
+
+	// Build a new sorted list using InsertSorted.
+	//
 	std::vector <char> sorted;
 	for (unsigned i = 0; i < chars.size (); ++i) {
 		Common::InsertSorted (chars[i], sorted);
@@ -69,6 +98,12 @@ int main ()
 		out << "\n";
 	}
 
-	out << std::endl << std::endl;
+	// -------------------------------------------------
+	// 
+	// 
+
+
+	out << "\n" << std::endl;
+
 	return 0;
 }

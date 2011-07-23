@@ -21,9 +21,17 @@
 	#define FLOAT_TYPE double
 #endif
 
+#ifndef FLOAT_EPSILON
+	#define FLOAT_EPSILON_DEFINED
+	#define FLOAT_EPSILON 1.0E-6
+#endif
 
 namespace Common
 {
+	// Epsilon value for floating point equality testing
+	//
+	const FLOAT_TYPE Epsilon = (FLOAT_TYPE) FLOAT_EPSILON;
+
 	// _________________________________________________
 	//
 	// Round
@@ -58,9 +66,10 @@ namespace Common
 		// until new item is in sorted order.
 		//
 		size_t j = c.size () - 1;
-		while (j > 0 && c[j] < c[j-1]) {
-			std::swap (c[j], c[j-1]);
-			--j; }
+		while ((j > 0) && (c[j] < c[j-1])) {
+			std::swap (c[j], c[j-1]); 
+			--j; 
+		}
 	}
 
 
@@ -70,28 +79,115 @@ namespace Common
 	// -- Provides linear interpolation between 
 	// _________________________________________________
 	//
-	template <class ItemType>
+	template <class ItemType> inline
 	ItemType Interpolate (ItemType v1, ItemType v2, FLOAT_TYPE t)
 	{
 		return v1 + t*(v2-v1);
-		// equivalent to (1-p)*v1 + p*v2
+		// equivalent to (1-p)*v1 + p*v2.
 	}
 
 
 	// _________________________________________________
 	//
 	// SmoothInterpolate
-	// -- Provides sinusoidal interpolation between 
+	// -- Provides cubic interpolation between values.
 	// _________________________________________________
 	//
-	template <class ItemType>
+	template <class ItemType> inline
 	ItemType SmoothInterpolate (ItemType v1, ItemType v2, FLOAT_TYPE t)
 	{
-		FLOAT_TYPE theta = t * M_PI;
-		FLOAT_TYPE p = (1.0 - cos (theta)) * 0.5;
-		return v1 + p*(v2-v1);
-		// equivalent to (1-p)*v1 + p*v2
+		FLOAT_TYPE p = t*t*(3-2*t); // 3t^2 - 2t^3 = t^2(3-2t)
+		return Interpolate (v1, v2, p*(v2-v1)); //v1 + p*(v2-v1);
+		// equivalent to (1-p)*v1 + p*v2.
 	}
+
+
+	// _________________________________________________
+	//
+	// CosInterpolate
+	// -- Provides sinusoidal interpolation between values.
+	// _________________________________________________
+	//
+	template <class ItemType> inline
+	ItemType CosInterpolate (ItemType v1, ItemType v2, FLOAT_TYPE t)
+	{
+		FLOAT_TYPE p = (1.0 - cos (t * M_PI)) * 0.5;
+		return Interpolate (v1, v2, p*(v2-v1)); //v1 + p*(v2-v1);
+		// equivalent to (1-p)*v1 + p*v2.
+	}
+
+
+	// _________________________________________________
+	//
+	// WrapEuler
+	// -- Returns values in the range [-180, 180].
+	// _________________________________________________
+	//
+	inline
+	FLOAT_TYPE WrapEuler (FLOAT_TYPE angle, bool radians = true)
+	{
+		FLOAT_TYPE alpha = (radians == true) ? (float) M_PI : 180.f;
+		if (angle < -alpha) angle = angle + 2*alpha;
+		if (angle >  alpha) angle = angle - 2*alpha;
+		return angle;
+	}
+
+
+	// _________________________________________________
+	//
+	// Clamp
+	// -- Clips the bounds of a value, [min, max].
+	// _________________________________________________
+	//
+	template <class ItemType> inline
+	ItemType Clamp (ItemType val, ItemType min, ItemType max)
+	{
+		if (val < min) val = min;
+		if (val > max) val = max;
+		return val;
+	}
+
+
+	// _________________________________________________
+	//
+	// Wrap
+	// -- Wraps values from min->max and max->min.
+	// _________________________________________________
+	//
+	template <class ItemType> inline
+	ItemType Wrap (ItemType val, ItemType min, ItemType max)
+	{
+		while (val < min) val += (max-min);
+		while (val > max) val -= (max-min);
+		return val;
+	}
+
+
+	// _________________________________________________
+	//
+	// Min
+	// -- Returns the minimum of two values.
+	// _________________________________________________
+	//
+	template <class ItemType> inline
+	ItemType Min (ItemType val1, ItemType val2)
+	{
+		return val1 < val2 ? val1 : val2;
+	}
+
+
+	// _________________________________________________
+	//
+	// Max
+	// -- Returns maximum of two values.
+	// _________________________________________________
+	//
+	template <class ItemType> inline
+	ItemType Max (ItemType val1, ItemType val2)
+	{
+		return val1 > val2 ? val1 : val2;
+	}
+
 
 }
 
@@ -120,6 +216,7 @@ namespace Random
 		else
 			srand (seed);
 	}
+
 
 	// _________________________________________________
 	//
@@ -162,6 +259,7 @@ namespace Random
 		return rand () / (float) (RAND_MAX + 1);
 	}
 
+
 	// _________________________________________________
 	//
 	// RandFloatN
@@ -173,6 +271,7 @@ namespace Random
 		return 2 * RandFloat () - 1;
 	}
 
+
 	// _________________________________________________
 	//
 	// TrueOrFalse
@@ -182,6 +281,18 @@ namespace Random
 	inline bool TrueOrFalse ()
 	{
 		return RandFloat () < 0.5;
+	}
+
+
+	// _________________________________________________
+	//
+	// HeadsOrTails
+	// -- 50/50 function, {true, false}
+	// _________________________________________________
+	//
+	inline bool HeadsOrTails ()
+	{
+		return TrueOrFalse ();
 	}
 
 
@@ -215,5 +326,10 @@ namespace Random
 	#undef FLOAT_TYPE_DIFINED
 #endif
 
+
+#ifdef FLOAT_EPSILON_DEFINED
+	#undef FLOAT_EPSILON
+	#undef FLOAT_EPSILON_DIFINED
+#endif
 
 #endif // UTILS_H
